@@ -134,7 +134,11 @@
               --circular-loader-height="17px"
               disabled={action.disabled || action.loading || disabled}
               loading={action.loading}
-              onclick={action.onClick}
+              onclick={e => {
+                action.loading = true
+                action.onClick(e)
+                action.loading = false
+              }}
             >
               <div class="action" bind:this={disabledInfoActivators[action.label]}>
                 {#if action.icon}
@@ -166,8 +170,7 @@
                   --button-hover-color: var(--quick-actions-buttons-color, var(--quick-actions-default-buttons-color));
                   --button-focus-color: var(--quick-actions-buttons-color, var(--quick-actions-default-buttons-color));
                   --button-disabled-color: var(--quick-actions-buttons-color-disabled, var(--quick-actions-default-buttons-color-disabled));
-                  --button-box-shadow: none;"
-                  margin-left: 8px;
+                  --button-box-shadow: none;
                 '
                 --button-height="20px"
                 onclick={(e) => {
@@ -225,7 +228,11 @@
               --circular-loader-height="25px"
               disabled={action.disabled || action.loading || disabled}
               loading={action.loading}
-              onclick={action.onClick}
+              onclick={e => {
+                action.loading = true
+                action.onClick(e)
+                action.loading = false
+              }}
             >
               <div class="action" bind:this={disabledInfoActivators[action.label]}>
                 {#if action.icon}
@@ -386,13 +393,13 @@
     align-items: center;
     box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
     position: fixed;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 8px;
+    border-radius: 8px;
     background-color: var(
       --quick-actions-background-color,
       var(--quick-actions-default-background-color)
     );
-    gap: 15px;
+    gap: 4px;
     left: 79dvw;
   }
 
@@ -417,13 +424,13 @@
       align-items: center;
       box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
       position: fixed;
-      padding: 10px;
-      border-radius: 10px;
+      padding: 8px;
+      border-radius: 8px;
       background-color: var(
         --quick-actions-background-color,
         var(--quick-actions-default-background-color)
       );
-      gap: 15px;
+      gap: 4px;
       left: 73dvw;
     }
   }

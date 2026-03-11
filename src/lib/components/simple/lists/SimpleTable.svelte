@@ -159,7 +159,7 @@
     resizing = false,
     colspan = $derived.by(() => {
       return headers.length +
-        (appendSnippet ||  stickyAppendSnippet? 1 : 0) +
+        (appendSnippet ||  stickyAppendSnippet ? 1 : 0) +
         (prependSnippet ? 1 : 0) +
         (remainingWidth ? 1 : 0);
     })
@@ -171,7 +171,7 @@
     return true;
   });
 
-  const DEFAULT_MIN_WIDTH_PX = 130,
+  const DEFAULT_MIN_WIDTH_PX = 60,
     DEFAULT_MAX_WIDTH_PX = 400
 
   onMount(() => {
@@ -192,26 +192,7 @@
         resizeObserver.observe(tableContainer);
       }
 
-      if (appendSnippet && headersHTML['row-append-header']) {
-        const actionCells = tableContainer?.querySelectorAll('.row-append-cell');
-        
-        if (actionCells && actionCells.length > 0) {
-          let maxActionWidth = 0;
-
-          for (let i = 0; i < actionCells.length; i++) {
-            const cellContent = actionCells[i];
-            const width = cellContent.getBoundingClientRect().width;
-            if (width > maxActionWidth) {
-              maxActionWidth = width;
-            }
-          }
-
-          const finalWidth = Math.max(Math.ceil(maxActionWidth), 40);
-          
-          headersHTML['row-append-header'].style.width = `${finalWidth}px`;
-          headersHTML['row-append-header'].style.minWidth = `${finalWidth}px`;
-        } 
-      }
+      resizeRowAppendHeader()
 
       for(const head of headers) {
         let th = headersHTML[head.value]
@@ -220,7 +201,6 @@
         }
       }
 
-      tableHTML?.classList.add('resizable')
 
       return () => {
         resizeObserver?.disconnect();
@@ -414,7 +394,8 @@
 
   async function updateRemainingWidth() {
     if(tableContainer != null && !!tableContainer && mainHeader) {
-      const containerWidth = tableContainer?.getBoundingClientRect().width - 10;
+      const containerWidth = tableContainer?.getBoundingClientRect().width;
+      const scrollbarWidth = tableContainer.offsetWidth - tableContainer.clientWidth
 
       if(containerWidth){
         const totalResizableWidth = headers.reduce((sum, head) => {
@@ -423,20 +404,55 @@
             resizeHeader(th, head)
           }
           const width = th?.getBoundingClientRect().width || 0
-          return sum + width + 1;
+          return sum + width;
         }, 0);
+
+        resizeRowAppendHeader()
     
         const extraStaticWidth = Array.from(mainHeader.querySelectorAll('th.non-resizable, th.row-append-header'))
-          .reduce((sum, th) => sum + th.getBoundingClientRect().width + 1, 0);
+          .reduce((sum, th) => sum + th.getBoundingClientRect().width, 0);
     
-        remainingWidth = Math.max(0, containerWidth - totalResizableWidth - extraStaticWidth);
+        remainingWidth = Math.max(0, containerWidth - scrollbarWidth - totalResizableWidth - extraStaticWidth);
       }
+    }
+  }
+
+  function resizeRowAppendHeader() {
+    if ((appendSnippet || stickyAppendSnippet) && headersHTML['row-append-header']) {
+      if(!!headersHTML['row-append-header'].style.width && headersHTML['row-append-header'].style.width != "0px") {
+        return
+      }
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'auto'
+      }
+
+      let widthWithPadding = headersHTML['row-append-header'].scrollWidth
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'fixed'
+      }
+      
+      headersHTML['row-append-header'].style.width = `${widthWithPadding}px`;
+      headersHTML['row-append-header'].style.minWidth = `${widthWithPadding}px`;
     }
   }
 
   function resizeHeader(th: HTMLElement, header: { value: string, minWidth?: string, maxWidth?: string }){
     if (!resizedColumnSizeWithPadding[header.value]) {
-      let widthWithPadding = th.getBoundingClientRect().width
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'auto'
+      }
+
+      let widthWithPadding = th.scrollWidth
+
+      if (widthWithPadding == 0) {
+        return
+      }
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'fixed'
+      }
 
       let minWidth = header.minWidth,
         minWidthPx = DEFAULT_MIN_WIDTH_PX
@@ -467,7 +483,7 @@
 
 {#if !!items && Array.isArray(items)}
   <div class="simple-table-container {clazz.container || ''}" bind:this={tableContainer}>
-    <table class="table" bind:this={tableHTML}>
+    <table class="table resizable" bind:this={tableHTML}>
       <thead class="thead {clazz.header || ''}" bind:this={mainHeader}>
         <tr>
           {#if prependSnippet}
@@ -557,6 +573,7 @@
           {#if remainingWidth}
             <th
               style:width={remainingWidth + 'px'}
+              style:padding=0
               class="filler"
               aria-hidden="true"
             ></th>
@@ -652,7 +669,7 @@
                 >
                   <div
                     class="row-append-cell"
-                    style="display: inline-block; white-space: nowrap;"
+                    style="display: inline-block;"
                   >
                     {@render appendSnippet?.({ index: i, item })}
                   </div>
@@ -848,6 +865,7 @@
 
   .table.resizable td, th {
     text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   th {
@@ -968,7 +986,7 @@
     );
   }
   .non-resizable {
-    padding-left: 0px !important;
+    padding: 0px !important;
     text-align: center;
     width: var(
       --simple-table-non-resizable-header-width,

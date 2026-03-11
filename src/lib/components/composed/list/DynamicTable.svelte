@@ -40,26 +40,8 @@
   onMount(() => {
     (async () => {
       await tick()
-      if (rowAppendSnippet && headersHTML['row-append-header']) {
-        const actionCells = tableContainer?.querySelectorAll('.row-append-cell');
-        
-        if (actionCells && actionCells.length > 0) {
-          let maxActionWidth = 0;
 
-          for (let i = 0; i < actionCells.length; i++) {
-            const cellContent = actionCells[i];
-            const width = cellContent.getBoundingClientRect().width;
-            if (width > maxActionWidth) {
-              maxActionWidth = width;
-            }
-          }
-
-          const finalWidth = Math.max(Math.ceil(maxActionWidth), 40);
-          
-          headersHTML['row-append-header'].style.width = `${finalWidth}px`;
-          headersHTML['row-append-header'].style.minWidth = `${finalWidth}px`;
-        } 
-      }
+      resizeRowAppendHeader()
 
       updateHeaderHeight();
       window.addEventListener('resize', updateHeaderHeight);
@@ -75,8 +57,6 @@
           resizeHeader(th, head)
         }
       }
-
-      tableHTML?.classList.add('dynamic-resizable')
 
       resizeObserver = new ResizeObserver(() => {
         if (tableContainer) {
@@ -579,7 +559,7 @@
     totalStickyWidth = width;
   }
 
-  const DEFAULT_MIN_WIDTH_PX = 130,
+  const DEFAULT_MIN_WIDTH_PX = 60,
     DEFAULT_MAX_WIDTH_PX = 400
   
   let totalSections = $derived((totalRows - renderedRowsNumber) / sectionRowsNumber)
@@ -1450,7 +1430,7 @@
   
   async function updateRemainingWidth() {
     if(tableContainer != null && !!tableContainer && mainHeader) {
-      const containerWidth = tableContainer.getBoundingClientRect().width - 10;
+      const containerWidth = tableContainer.getBoundingClientRect().width;
 
       if(containerWidth){
         const totalResizableWidth = headersToShowInTable.reduce((sum, head) => {
@@ -1459,20 +1439,56 @@
             resizeHeader(th, head)
           }
           const width = th?.getBoundingClientRect().width || 0
-          return sum + width + 1;
+          return sum + width;
         }, 0);
+
+        resizeRowAppendHeader()
     
         const extraStaticWidth = Array.from(mainHeader.querySelectorAll('th.non-resizable, th.row-append-header'))
-          .reduce((sum, th) => sum + th.getBoundingClientRect().width + 1, 0);
+          .reduce((sum, th) => sum + th.getBoundingClientRect().width, 0);
     
-        remainingWidth = Math.max(0, containerWidth - totalResizableWidth - extraStaticWidth + 18);
+        remainingWidth = Math.max(0, containerWidth - totalResizableWidth - extraStaticWidth);
       }
+    }
+  }
+
+  function resizeRowAppendHeader() {
+    if ((customizeHeaders || rowAppendSnippet) && headersHTML['row-append-header']) {
+      if(!!headersHTML['row-append-header'].style.width && headersHTML['row-append-header'].style.width != "0px") {
+        return
+      }
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'auto'
+      }
+
+      let widthWithPadding = headersHTML['row-append-header'].scrollWidth
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'fixed'
+      }
+      
+      headersHTML['row-append-header'].style.width = `${widthWithPadding}px`;
+      headersHTML['row-append-header'].style.minWidth = `${widthWithPadding}px`;
     }
   }
 
   function resizeHeader(th: HTMLElement, header: { value: string, minWidth?: string, maxWidth?: string }){
     if (!resizedColumnSizeWithPadding[header.value]) {
-      let widthWithPadding = th.getBoundingClientRect().width
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'auto'
+      }
+
+      let widthWithPadding = th.scrollWidth
+
+      if (widthWithPadding == 0) {
+        return
+      }
+
+      if (tableHTML) {
+        tableHTML.style.tableLayout = 'fixed'
+      }
 
       let minWidth = header.minWidth,
         minWidthPx = DEFAULT_MIN_WIDTH_PX
@@ -1696,7 +1712,7 @@
       hasMore={currentSectionNumber > 0 && userScrolling}
       direction='backward'
     />
-    <table style="display: table;" class="dynamic-table" bind:this={tableHTML}>
+    <table style="display: table;" class="dynamic-table dynamic-resizable" bind:this={tableHTML}>
       <thead class="table-header {clazz.header}" bind:this={mainHeader}>
         <tr>
           {#if !!showSelect && !showExpand && rows.length > 0}
@@ -1808,6 +1824,7 @@
             <th
               style:width={remainingWidth + 'px'}
               class="filler"
+              style:padding=0
               aria-hidden="true"
             ></th>
           {/if}
@@ -2487,13 +2504,8 @@
     width: 100%;
   }
 
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
   .hide-scrollbar::-webkit-scrollbar {
-    display: none;
+    width: 0px;
   }
 
   .dynamic-table {

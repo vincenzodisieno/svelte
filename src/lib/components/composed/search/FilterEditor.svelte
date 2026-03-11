@@ -61,8 +61,18 @@
   let advancedModeOptions: Item[] | undefined = $state(),
     advancedModeSelectedOptions: Item[] = $state([])
 
-  function initTmpFilter() {
-    tmpFilter = filter === undefined ? undefined : {...filter}
+  function closeDropDown() {
+    dropdownOpened = false
+  }
+
+  $effect(() => {
+    if(!!filter && !tmpFilter) {
+      tick().then(() => {
+        tmpFilter = filter === undefined ? undefined : {...filter}
+        closeDropDown();
+      });
+    }
+    
     if(!!tmpFilter && ['string', 'number', 'date', 'select'].includes(tmpFilter.type) && Object.keys(tmpFilter).includes('mode')) {
       //@ts-ignore
       if((tmpFilter.mode == 'between' && tmpFilter.from !== undefined && tmpFilter.to !== undefined) || tmpFilter.value !== undefined || (tmpFilter.type == 'select' && tmpFilter.values !== undefined && tmpFilter.values.length > 0)) {
@@ -71,20 +81,6 @@
           value: tmpFilter.mode, label: labelsMapper[tmpFilter.mode].short || tmpFilter.mode
         }]
       }
-    }
-  }
-
-
-  function closeDropDown() {
-    dropdownOpened = false
-  }
-
-  $effect(() => {
-    if(!!filter && !tmpFilter) {
-      tick().then(() => {
-        initTmpFilter();
-        closeDropDown();
-      });
     }
   }) 
 
@@ -184,7 +180,7 @@
 {#if !!filter && !!tmpFilter}
   <div class="filter-container" style:margin={editFilterMode === 'one-edit' ? '5%' : '0'}>
     <div class="filter-editor" class:row={
-      (tmpFilter.type == 'number' || (tmpFilter.type == 'date' && ((advancedModeSelectedOptions.length && advancedModeSelectedOptions[0].value != 'between') || tmpFilter.betweenModeSingleTextField)))
+      (tmpFilter.type == 'number' || tmpFilter.type == 'string' || (tmpFilter.type == 'date' && ((advancedModeSelectedOptions.length && advancedModeSelectedOptions[0].value != 'between') || tmpFilter.betweenModeSingleTextField)))
     }>
       {#if filter.advanced}
         <div class="advanced-mode">
@@ -227,6 +223,7 @@
               type="text"
               placeholder={editFilterMode == 'one-edit' ? tmpFilter?.label : undefined}
               --simple-textfield-width="100%"
+              --simple-textfield-padding='0.45rem 0.6rem'
               oninput={() => handleChangeValue()}
             ></SimpleTextField>
           {:else if tmpFilter.type === "date" && tmpFilter.mode !== 'between'}
@@ -236,7 +233,7 @@
                 openingId="advanced-filter"
                 bind:menuOpened={calendarOpened}
                 --simple-textfield-width="100%"
-                --simple-textfield-padding='0.50rem 0.6rem'
+                --simple-textfield-padding='0.45rem 0.6rem'
                 flipOnOverflow
                 oninput={() => handleChangeValue()}
                 ondayClick={() => handleChangeValue()}
@@ -260,6 +257,7 @@
                 type="number"
                 placeholder={editFilterMode == 'one-edit' ? tmpFilter?.label : undefined}
                 --simple-textfield-width="100%"
+                --simple-textfield-padding='0.45rem 0.6rem'
                 onchange={() => handleChangeValue()}
               ></SimpleTextField>
             </div>
@@ -302,7 +300,7 @@
                 placeholderTo={betweenToLabel}
                 bind:menuOpened={calendarOpened}
                 --simple-textfield-width="100%"
-                --simple-textfield-padding='0.50rem 0.6rem'
+                --simple-textfield-padding='0.45rem 0.6rem'
                 oninput={() => handleChangeValue(tmpFilter?.type == 'date' && tmpFilter.mode == 'between' && (!tmpFilter.from || !tmpFilter.to))}
                 ondayClick={() => handleChangeValue(tmpFilter?.type == 'date' && tmpFilter.mode == 'between' && (!tmpFilter.from || !tmpFilter.to))}
               >
@@ -327,6 +325,7 @@
                     placeholder={betweenFromLabel}
                     bind:menuOpened={calendarOpened}
                     --simple-textfield-width="100%"
+                    --simple-textfield-padding='0.45rem 0.6rem'
                     oninput={() => handleChangeValue()}
                     ondayClick={() => handleChangeValue()}
                   >
@@ -350,6 +349,7 @@
                     placeholder={betweenToLabel}
                     bind:menuOpened={calendarOpened2}
                     --simple-textfield-width="100%"
+                    --simple-textfield-padding='0.45rem 0.6rem'
                     flipOnOverflow
                     oninput={() => handleChangeValue()}
                     ondayClick={() => handleChangeValue()}
@@ -376,6 +376,7 @@
                   type="number"
                   placeholder={betweenFromLabel}
                   --simple-textfield-width="100%"
+                  --simple-textfield-padding='0.45rem 0.6rem'
                   onchange={() => handleChangeValue()}
                 ></SimpleTextField>
               </div>
@@ -385,6 +386,7 @@
                   type="number"
                   placeholder={betweenToLabel}
                   --simple-textfield-width="100%"
+                  --simple-textfield-padding='0.45rem 0.6rem'
                   onchange={() => handleChangeValue()}
                 ></SimpleTextField>
               </div>
