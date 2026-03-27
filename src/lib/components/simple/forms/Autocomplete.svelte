@@ -11,6 +11,13 @@
   import "../../../css/main.css";
   import "./Autocomplete.css";
   import { scrollInMenu } from "../common/scroller";
+  import Chip from "$lib/components/simple/navigation/Chip.svelte";
+  import Menu from "$lib/components/simple/common/Menu.svelte";
+  import { type ComponentProps, type Snippet } from "svelte";
+  import SimpleTextField from "./SimpleTextField.svelte";
+  import MenuOrDrawer from "$lib/components/composed/common/MenuOrDrawer.svelte";
+  import Drawer from "../navigation/Drawer.svelte";
+  import Icon from "../media/Icon.svelte";
 
   type ItemData = Item<Data>;
   interface Props {
@@ -166,9 +173,35 @@
     onclose,
   }: Props = $props();
 
-  let notVisibleChipNumber = $derived(
-    Math.max(((values || []).length || 0) - (maxVisibleChips || 0), 0),
-  );
+  let focusedIndex: number | undefined = $state(undefined),
+    input: HTMLElement | undefined = $state(),
+    filteredItems: ItemData[] = $state(items),
+    notVisibleChipNumber = $derived(
+      Math.max(((values || []).length || 0) - (maxVisibleChips || 0), 0),
+    ),
+    menuProps: NonNullable<ComponentProps<typeof MenuOrDrawer>['menuProps']> = $state({
+      _width: "",
+      _height: "auto",
+      _maxHeight: menuMaxHeight,
+      _boxShadow: menuBoxShadow,
+      _borderRadius: menuBorderRadius,
+      anchor: menuAnchor,
+      closeOnClickOutside: true,
+      stayInViewport: menuStayInViewport,
+      flipOnOverflow: menuFlipOnOverflow,
+      refreshPosition: false,
+      openingId: "autocomplete-menu",
+      menuElement: undefined,
+    })
+
+  $effect(() => {
+    menuProps._maxHeight = menuMaxHeight
+    menuProps._boxShadow = menuBoxShadow
+    menuProps._borderRadius = menuBorderRadius
+    menuProps.anchor = menuAnchor
+    menuProps.stayInViewport = menuStayInViewport
+    menuProps.flipOnOverflow = menuFlipOnOverflow
+  })
 
   function select(item: ItemData) {
     if (disabled) return;
@@ -238,10 +271,6 @@
     else select(item);
   }
 
-  let localMenuWidth: string | undefined | null = $state(undefined),
-    menuHeight = "auto",
-    refreshPosition = $state(false);
-
   function openMenu() {
     refreshMenuWidth();
     menuOpened = true;
@@ -249,17 +278,15 @@
 
   function refreshMenuWidth() {
     setTimeout(() => {
-      if (menuWidth !== undefined) localMenuWidth = menuWidth;
-      else if (!!activator) localMenuWidth = activator.offsetWidth + "px";
+      if (menuWidth !== undefined && menuWidth != null) menuProps._width = menuWidth;
+      else if (!!menuProps.activator) menuProps._width = menuProps.activator.offsetWidth + "px";
 
       setTimeout(() => {
-        refreshPosition = true;
+        menuProps.refreshPosition = true;
       }, 1);
     }, 1);
   }
 
-  let activator: HTMLElement | undefined = $state(),
-    focusedIndex: number | undefined = $state(undefined);
   function handleTextFieldFocus() {
     if (onfocus) {
       onfocus();
@@ -277,7 +304,6 @@
     // closeMenu()
   }
 
-  let menuElement: HTMLElement | undefined = $state();
   function handleKeyDown(event: KeyboardEvent) {
     if (onkeydown) {
       onkeydown(event);
@@ -307,16 +333,15 @@
       menuOpened = false;
     }
 
-    if (focusedIndex !== undefined && !!menuElement) {
-      let child = menuElement.querySelector<HTMLElement>(
+    if (focusedIndex !== undefined && !!menuProps.menuElement) {
+      let child = menuProps.menuElement.querySelector<HTMLElement>(
         ".item-" + focusedIndex,
       );
 
-      if (!!child) scrollInMenu(menuElement, child, "instant");
+      if (!!child) scrollInMenu(menuProps.menuElement, child, "instant");
     }
   }
 
-  let input: HTMLElement | undefined = $state();
   function handleContainerClick() {
     if (disabled) return;
 
@@ -330,7 +355,6 @@
     }
   }
 
-  let filteredItems: ItemData[] = $state(items);
   $effect(() => {
     if (searchText) {
       focusedIndex = undefined;
@@ -368,20 +392,12 @@
       }
     }
   });
-
-  import Chip from "$lib/components/simple/navigation/Chip.svelte";
-  import Menu from "$lib/components/simple/common/Menu.svelte";
-  import { type ComponentProps, type Snippet } from "svelte";
-  import SimpleTextField from "./SimpleTextField.svelte";
-  import MenuOrDrawer from "$lib/components/composed/common/MenuOrDrawer.svelte";
-  import Drawer from "../navigation/Drawer.svelte";
-  import Icon from "../media/Icon.svelte";
 </script>
 
 <svelte:window />
 
 <div
-  bind:this={activator}
+  bind:this={menuProps.activator}
   style:width
   style:max-width={maxWidth}
   style:min-width={minWidth}
@@ -470,20 +486,11 @@
     {@render menuSnippet()}
   {:else if !mobileDrawer}
     <Menu
-      {activator}
-      _width={localMenuWidth || ""}
-      _height={menuHeight}
-      _maxHeight={menuMaxHeight}
-      _boxShadow={menuBoxShadow}
-      _borderRadius={menuBorderRadius}
+      {...menuProps}
       bind:open={menuOpened}
-      anchor={menuAnchor}
-      closeOnClickOutside
-      stayInViewport={menuStayInViewport}
-      flipOnOverflow={menuFlipOnOverflow}
-      bind:refreshPosition
-      bind:menuElement
-      bind:openingId
+      bind:refreshPosition={menuProps.refreshPosition}
+      bind:menuElement={menuProps.menuElement}
+      bind:openingId={menuProps.openingId}
     >
       <ul
         class={clazz.menu || ""}
@@ -528,14 +535,7 @@
     </Menu>
   {:else}
     <MenuOrDrawer
-      menuProps={{
-        activator,
-        _width: localMenuWidth || "", 
-        _height: menuHeight,
-        _maxHeight: "300px",
-        _boxShadow: menuBoxShadow,
-        _borderRadius: menuBorderRadius,
-      }}
+      bind:menuProps
       drawerProps={{
         onclose
       }}

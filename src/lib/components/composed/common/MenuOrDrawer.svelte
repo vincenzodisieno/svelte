@@ -18,14 +18,16 @@
     ]>
   }
 
-  let { 
+  let {
     open = $bindable(),
     drawerProps,
-    menuProps,
+    menuProps = $bindable(),
     children,
   }: Props = $props();
 
-  const menuPropsDefaultValue = {
+  if (!menuProps) menuProps = {}
+
+  const menuPropsDefaultValue: Omit<ComponentProps<typeof Menu>, 'open'> = {
     closeOnClickOutside: true,
     _boxShadow: "rgb(var(--global-color-grey-900), .5) 0px 2px 4px",
     _height: "fit-content",
@@ -37,31 +39,37 @@
   }
 
   let finalMenuProps = $derived(
-    lodash.clone(lodash.merge(menuPropsDefaultValue, menuProps))
+    lodash.merge({}, menuPropsDefaultValue, menuProps)
   )
 
-  const drawerPropsDefaultValue = {
+  const drawerPropsDefaultValue: Omit<ComponentProps<typeof Drawer>, 'open'> = {
     position: 'bottom'
   }
 
   let finalDrawerProps = $derived(
-    lodash.clone(lodash.merge(drawerPropsDefaultValue, drawerProps))
+    lodash.merge({}, drawerPropsDefaultValue, drawerProps)
   )
 </script>
 
 <MediaQuery>
-  {#snippet defaultSnippet({ mAndDown})}
+  {#snippet defaultSnippet({ mAndDown })}
     {#if mAndDown}
       <Drawer
-        bind:open={open}
         {...finalDrawerProps}
+        bind:open={open}
       >
         {@render children?.({ isDrawer: true, isMenu: false })}
       </Drawer>
     {:else}
       <Menu
-        bind:open={open}
         {...finalMenuProps}
+        bind:open
+        bind:flipOnOverflow={menuProps.flipOnOverflow}
+        bind:refreshPosition={menuProps.refreshPosition}
+        bind:stayInViewport={menuProps.stayInViewport}
+        bind:activator={menuProps.activator}
+        bind:menuElement={menuProps.menuElement}
+        bind:openingId={menuProps.openingId}
       >
         {@render children?.({ isDrawer: false, isMenu: true })}
       </Menu>
