@@ -246,17 +246,28 @@ export default class Converter {
     filter: DateFilter
   }): Builder {
     if (params.filter.mode == 'equal' && !!params.filter.value) {
-      params.builder.where(params.filter.column, '=', params.filter.value)
+      const startOfDay = new Date(params.filter.value)
+      startOfDay.setHours(0, 0, 0, 0)
+
+      const endOfDay = new Date(params.filter.value)
+      endOfDay.setHours(23, 59, 59, 999)
+
+      params.builder.where(params.filter.column, '>=', startOfDay)
+      params.builder.where(params.filter.column, '<=', endOfDay)
     } else if (params.filter.mode == 'greater' && !!params.filter.value) {
       params.builder.where(params.filter.column, '>', params.filter.value)
     } else if (params.filter.mode == 'lower' && !!params.filter.value) {
       params.builder.where(params.filter.column, '<', params.filter.value)
     } else if (params.filter.mode == 'between') {
       if(!!params.filter.from) {
-        params.builder.where(params.filter.column, '>=', params.filter.from)
+        const from = new Date(params.filter.from)
+        from.setHours(0, 0, 0, 0)
+        params.builder.where(params.filter.column, '>=', from)
       }
       if(!!params.filter.to) {
-        params.builder.where(params.filter.column, '<=', params.filter.to)
+        const to = new Date(params.filter.to)
+        to.setHours(23, 59, 59, 999)
+        params.builder.where(params.filter.column, '<=', to)
       }
     }
 
