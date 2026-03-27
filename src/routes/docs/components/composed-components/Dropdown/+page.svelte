@@ -148,6 +148,7 @@
     { name: "height", type: "string", description: "Height of the autocomplete input field.", default: "undefined" },
     { name: "minWidth", type: "string", description: "Minimum width of the autocomplete input field.", default: "none" },
     { name: "menuWidth", type: "string", description: "Width of the autocomplete menu.", default: "width" },
+    { name: "menuAnchor", type: "MenuAnchor", description: "Anchor of the autocomplete menu.", default: "bottom-center" },
     { name: "mobileDrawer", type: "boolean", description: "If true, the menu is displayed as a mobile drawer.", default: "false" },
     { name: "disabled", type: "boolean", description: "If true, the autocomplete is disabled.", default: "false" },
   ]}

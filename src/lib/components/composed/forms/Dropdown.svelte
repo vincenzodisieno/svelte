@@ -23,6 +23,7 @@
     height?: string;
     minWidth?: string;
     menuWidth?: string;
+    menuAnchor?: ComponentProps<typeof Autocomplete>['menuAnchor'];
     mobileDrawer?: boolean;
     disabled?: boolean;
     onchange?: (event: {
@@ -61,6 +62,7 @@
     height,
     minWidth = 'none',
     menuWidth = width,
+    menuAnchor,
     mobileDrawer = false,
     disabled = false,
     onchange,
@@ -108,6 +110,7 @@
   {height}
   {menuWidth}
   {itemLabelSnippet}
+  {menuAnchor}
 >
   {#snippet selectionContainerSnippet({ openMenu, handleKeyDown })}
     <Button

@@ -83,7 +83,7 @@
 
       const dirLabel = dir === 'next' 
         ? (lang == 'en' ? 'Next' : unit == 'weeks' ? 'Prossime' : 'Prossimi')
-        : (lang == 'en' ? 'Last' : unit == 'weeks' ? 'Ultime' : 'Ultimi');
+        : (lang == 'en' ? 'Last' : unit == 'weeks' ? 'Scorse' : 'Scorsi');
 
       return `${dirLabel} ${num} ${unitLabel}`;
     }
@@ -570,6 +570,7 @@
                   mobileDrawer
                   clearable={false}
                   menuWidth='fit-content'
+                  menuAnchor='bottom'
                   openingId='rolling-direction'
                 ></Dropdown>
               </div>
@@ -581,6 +582,7 @@
                   oninput={() => handleRollingInput()}
                   --simple-textfield-width="100%"
                   --simple-textfield-margin-bottom="0px"
+                  --simple-textfield-border-radius="4px"
                 ></SimpleTextField>
               </div>
 
