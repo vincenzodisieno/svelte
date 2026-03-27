@@ -272,16 +272,7 @@
   }
 
   function calculateWidgetsFromLocalWidgets() {
-		widgets = widgetCells?.map((lWidget) => {
-			return {
-				id: lWidget.widget.id,
-				name: lWidget.widget.name,
-				height: lWidget.widget.height,
-				width: lWidget.widget.width,
-				left: lWidget.widget.left,
-				top: lWidget.widget.top,
-			}
-		})
+		widgets = widgetCells?.map((lWidget) => lWidget.widget)
 	}
 
   function closeAddWidgetDialog() {
