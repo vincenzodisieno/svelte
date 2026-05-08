@@ -183,7 +183,7 @@
     filters={filters}
     headers={headers}
     subHeaders={headers}
-    editFilterMode={'multi-edit'}
+    editFilterMode="multi-edit"
     headersToShowInTable={headers}
     showExpand
     filtersVisible
@@ -208,7 +208,7 @@
       ]
     }}
     customizeHeaders
-    searchBarPlaceholder={'Type to search'}
+    searchBarPlaceholder="Type to search"
     searchBarVisible
     resizableColumns
   >

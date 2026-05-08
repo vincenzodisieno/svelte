@@ -193,8 +193,8 @@
               openingId="advanced-filter"
               mobileDrawer={mobile}
               {lang}
-              minWidth={'100px'}
-              height={'100%'}
+              minWidth="100px"
+              height="100%"
               --button-padding="10px 12px"
               --button-border='var(--dropdown-button-border)'
               --button-background-color='var(--dropdown-button-background-color)'
@@ -275,7 +275,7 @@
                 mobileDrawer={mobile}
                 onchange={() => handleChangeValue()}
                 placeholder={editFilterMode == 'one-edit' ? tmpFilter?.label : undefined}
-                minWidth={''}
+                minWidth=""
                 ></Autocomplete>
             </div>
           {:else if tmpFilter.type === "select" && (tmpFilter.view === 'toggle')}

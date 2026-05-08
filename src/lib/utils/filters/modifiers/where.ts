@@ -1,4 +1,3 @@
-import type { Modifier } from "../builder"
 import type { FromModifier } from "./from"
 import type { JoinModifier } from "./join"
 import type { SelectModifier } from "./select"
@@ -67,7 +66,7 @@ type JsonSupersetWhere = {
   kind: 'jsonSuperset',
   logicalOperator?: 'and' | 'or' | 'andNot' | 'orNot',
   key: string,
-  value: Object
+  value: object
 }
 
 type NullWhere = {

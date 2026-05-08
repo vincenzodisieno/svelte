@@ -341,18 +341,21 @@
   $effect(() => {
     if (open) {
       if(!!openingId) {
-        const controllers = document.querySelectorAll(`[data-operation="close"][data-opening-id="${openingId}"]`)
-        for(let k = 0; k < controllers.length; k += 1) {
-          if(controllers[k] !== closeController) {
-            const clickEvent = new MouseEvent('click', {
-              bubbles: true,
-              cancelable: true,
-              view: window
-            })
-  
-            controllers[k].dispatchEvent(clickEvent)
+        const _openingId = openingId
+        const _currentUid = currentUid
+        setTimeout(() => {
+          const controllers = document.querySelectorAll(`[data-operation="close"][data-opening-id="${_openingId}"]`)
+          for(let k = 0; k < controllers.length; k += 1) {
+            if(controllers[k].getAttribute('data-uid') !== _currentUid) {
+              const clickEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+              })
+              controllers[k].dispatchEvent(clickEvent)
+            }
           }
-        }
+        }, 0)
       }
 
       if (!menuElement || !activator) return;

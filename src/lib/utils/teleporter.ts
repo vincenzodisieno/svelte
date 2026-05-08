@@ -15,11 +15,11 @@ class Teleporter {
 
   loadBodyAndNodes() {
     this.bodyNode = document.body
-    let elements = Array.from(document.getElementsByClassName('_teleported'))
+    const elements = Array.from(document.getElementsByClassName('_teleported'))
 
     this.nodes = {}
     for(let i = 0; i < elements.length; i += 1) {
-      let teleportedUid = elements[i].getAttribute('teleported-uid')
+      const teleportedUid = elements[i].getAttribute('teleported-uid')
       if (!!teleportedUid) {
         this.nodes[teleportedUid] = elements[i]
       }
@@ -27,7 +27,7 @@ class Teleporter {
   }
 
   attachNode(node: HTMLElement): TeleportingUid {
-    let teleportedUid = createId()
+    const teleportedUid = createId()
     node.setAttribute('teleported-uid', teleportedUid)
     node.classList.add('_teleported')
 
@@ -38,7 +38,7 @@ class Teleporter {
   }
 
   destroyNode(uid: string) {
-    let node = this.nodes[uid]
+    const node = this.nodes[uid]
     if(!!node)
       node.remove()
   }

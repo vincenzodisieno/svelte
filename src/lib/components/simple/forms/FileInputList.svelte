@@ -151,7 +151,7 @@
           style:width="100%"
           style:display="flex"
         >
-          <div class="body-container" class:{active}>
+          <div class="body-container" class:active>
             {#if !files || files.length === 0}
               {#if messageSnippet}
                 {@render messageSnippet({ message })}

@@ -141,9 +141,9 @@ export function setColor(ct: (typeof colorNames)[number]) {
     localStorage.setItem("color", ct);
 
     document.documentElement.classList.add(ct);
-    let colorsToRemove = colorNames.filter((cn) => cn != ct);
+    const colorsToRemove = colorNames.filter((cn) => cn != ct);
 
-    for (let color of colorsToRemove) document.documentElement.classList.remove(color);
+    for (const color of colorsToRemove) document.documentElement.classList.remove(color);
 
     theme.update((v) => {
       v.active = ct;

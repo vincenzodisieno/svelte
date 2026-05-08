@@ -362,7 +362,7 @@
       {@render widgetSelectionDialogHeaderSnippet()}
     {:else}
       <div class="header">
-        <Icon name={"mdi-widgets-outline"} --icon-size="30px"/>
+        <Icon name="mdi-widgets-outline" --icon-size="30px"/>
         <div class="title">{lang == 'en' ? 'Add widget' : 'Aggiungi widget'}</div>
       </div>
     {/if}

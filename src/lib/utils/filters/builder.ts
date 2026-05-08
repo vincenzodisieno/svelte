@@ -94,18 +94,18 @@ export default class Builder {
     return this.applyWhereColumnClause('or', first, second, third)
   }
 
-  public whereJsonSuperset(key: string, object: Object): Builder
+  public whereJsonSuperset(key: string, object: object): Builder
   public whereJsonSuperset(
     first: string,
-    second: Object,
+    second: object,
   ): Builder {
     return this.applyWhereJsonSupersetClause('and', first, second)
   }
 
-  public orWhereJsonSuperset(key: string, object: Object): Builder
+  public orWhereJsonSuperset(key: string, object: object): Builder
   public orWhereJsonSuperset(
     first: string,
-    second: Object
+    second: object
   ): Builder {
     return this.applyWhereJsonSupersetClause('or', first, second)
   }
@@ -152,7 +152,7 @@ export default class Builder {
     second: WhereFilterValue[] | ((builder: Builder) => void)
   ): Builder {
     if (typeof second == 'function') {
-      let inBuilder = new Builder()
+      const inBuilder = new Builder()
       second(inBuilder)
 
       this._modifiers.push({
@@ -247,7 +247,7 @@ export default class Builder {
         logicalOperator
       })
     } else if (typeof first == 'function') {
-      let builder = new Builder()
+      const builder = new Builder()
       first(builder)
       if (!builder._modifiers.every(el => el.method == 'where')) throw new Error('inconsistent json query from where callback')
 
@@ -320,7 +320,7 @@ export default class Builder {
   private applyWhereJsonSupersetClause(
     logicalOperator: 'and' | 'or',
     first: string,
-    second: Object,
+    second: object,
   ): Builder {
     this._modifiers.push({
       method: 'where',
@@ -333,7 +333,7 @@ export default class Builder {
   }
 
   public join(table: string, onCallback: (onBuilder: OnClauseBuilder) => void) {
-    let onBuilder = new OnClauseBuilder()
+    const onBuilder = new OnClauseBuilder()
     onCallback(onBuilder)
 
     this.applyJoinClause('inner', table, onBuilder.json)
@@ -341,7 +341,7 @@ export default class Builder {
   }
 
   public leftJoin(table: string, onCallback: (onBuilder: OnClauseBuilder) => void) {
-    let onBuilder = new OnClauseBuilder()
+    const onBuilder = new OnClauseBuilder()
     onCallback(onBuilder)
 
     this.applyJoinClause('left', table, onBuilder.json)
@@ -349,7 +349,7 @@ export default class Builder {
   }
 
   public rightJoin(table: string, onCallback: (onBuilder: OnClauseBuilder) => void) {
-    let onBuilder = new OnClauseBuilder()
+    const onBuilder = new OnClauseBuilder()
     onCallback(onBuilder)
 
     this.applyJoinClause('right', table, onBuilder.json)
@@ -361,10 +361,10 @@ export default class Builder {
     parameterBuilder = builderCallback(parameterBuilder)
 
     for (let i = 0; i < parameterBuilder._modifiers.length; i += 1) {
-      let modifierToSearch = parameterBuilder._modifiers[i]
+      const modifierToSearch = parameterBuilder._modifiers[i]
       let found = false
       for (let k = 0; k < this._modifiers.length; k += 1) {
-        let currentModifier = this._modifiers[k]
+        const currentModifier = this._modifiers[k]
 
         found = lodash.isEqual(modifierToSearch, currentModifier)
         if (found) break

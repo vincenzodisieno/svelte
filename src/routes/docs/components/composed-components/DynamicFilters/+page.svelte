@@ -165,7 +165,7 @@
     handleSearchChange(searchText);
   }}
   --filters-default-wrapper-width="100%"
-  lang={'en'}
+  lang="en"
   editFilterMode='multi-edit'
 >
   {#snippet contentSnippet({ filters, handleRemoveAllFilters, mAndDown, updateMultiFilterValues, })}

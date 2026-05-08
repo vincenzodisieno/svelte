@@ -1,6 +1,6 @@
 import lodash from "lodash"
 
-let list: {
+const list: {
   title: string,
   description: string,
   status: 'stable' | 'beta' | 'deprecated',

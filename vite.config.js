@@ -6,6 +6,9 @@ const config = {
   server: {
     port: 4000,
   },
+  resolve: {
+    mainFields: ['module', 'main'],
+  },
 };
 
 export default config;

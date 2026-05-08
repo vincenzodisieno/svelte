@@ -368,9 +368,9 @@
     {:else}
       <Menu
         {activator}
-        _width={"300px"}
-        _boxShadow={"rgb(var(--global-color-background-300), .5) 0px 2px 4px"}
-        _borderRadius={"5px"}
+        _width="300px"
+        _boxShadow="rgb(var(--global-color-background-300), .5) 0px 2px 4px"
+        _borderRadius="5px"
         bind:open={menuOpened}
         anchor="bottom-center"
         closeOnClickOutside

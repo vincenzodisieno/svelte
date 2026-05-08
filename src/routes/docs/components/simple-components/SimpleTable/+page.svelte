@@ -9,8 +9,7 @@
   import EventsViewer from "../../EventsViewer.svelte";
   import SlotsViewer from "../../SlotsViewer.svelte";
 
-  let resizedColumnSizeWithPadding: { [value: string]: number } | undefined =
-    undefined;
+  let resizedColumnSizeWithPadding: { [value: string]: number } = {};
 
   let headers: Header[] = [
       // {

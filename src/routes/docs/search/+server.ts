@@ -18,11 +18,11 @@ await insertMultiple(db, componentsDatabase)
 await insertMultiple(db, themingDatabase)
 
 export const GET = (async ({ url }) => {
-  let searchText = url.searchParams.get('text')
+  const searchText = url.searchParams.get('text')
   if(!searchText) throw error(500, 'search text is not provided')
-  let limit = url.searchParams.get('limit')
+  const limit = url.searchParams.get('limit')
 
-  let searchResults = await search(db, {
+  const searchResults = await search(db, {
     term: searchText,
     // tolerance: 1,
     properties: ['title', 'description'],

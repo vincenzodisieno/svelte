@@ -21,7 +21,7 @@
     <Button disabled={true} --button-width="200px" --button-max-width="90vw">Disabled Button</Button>
   </div>
   <div class="example">
-    <Button buttonType="icon" icon={'mdi-filter'} disabled={true} --button-width="200px" --button-max-width="90vw"></Button>
+    <Button buttonType="icon" icon="mdi-filter" disabled={true} --button-width="200px" --button-max-width="90vw"></Button>
   </div>
 </form>
 
