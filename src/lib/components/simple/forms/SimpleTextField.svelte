@@ -6,7 +6,7 @@
   import type { Snippet } from 'svelte';
 
   interface Props extends HTMLInputAttributes{
-    value?: string | number;
+    value?: string | number | null;
     valueTo?: string | number;
     type?: "text" | "password" | "number" | "time" | "date";
     range?: boolean
