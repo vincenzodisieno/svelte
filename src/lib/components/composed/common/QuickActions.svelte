@@ -12,7 +12,7 @@
 
 <script lang="ts">
   import { Button, Icon, mediaQuery, ToolTip } from "$lib";
-  import type { ComponentProps } from "svelte";
+  import type { ComponentProps, Snippet } from "svelte";
   import { fly } from "svelte/transition";
   import { cubicIn } from "svelte/easing";
   import MenuOrDrawer from "./MenuOrDrawer.svelte";
@@ -25,6 +25,7 @@
     position?: 'top' | 'bottom';
     lang?: 'it' | 'en';
     onClose?: () => void
+    selectedItemsTextSnippet?: Snippet<[]>
   }
 
   let {
@@ -34,6 +35,7 @@
     position = 'top',
     lang = 'en',
     onClose,
+    selectedItemsTextSnippet,
   }: Props = $props();
 
   let actions: Action[] = $state([]),
@@ -110,8 +112,10 @@
             if(onClose) onClose()
           }}
         >
-          {selectedItems} {lang == 'en' ? 'items selected' : 'righe selezionate'}
-          <Icon name="mdi-close" />
+          {#if selectedItemsTextSnippet}{@render selectedItemsTextSnippet()}{:else}
+            {selectedItems} {lang == 'en' ? 'items selected' : 'righe selezionate'}
+            <Icon name="mdi-close" />
+          {/if}
         </button>
       </div>
       <div class="select-actions-container">

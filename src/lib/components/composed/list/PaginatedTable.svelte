@@ -105,6 +105,7 @@
       ]
     >;
     totalsSnippet?: Snippet<[]>
+    selectedItemsTextSnippet?: ComponentProps<typeof QuickActions>['selectedItemsTextSnippet']
   }
 
   let {
@@ -172,6 +173,7 @@
     totalsSnippet,
     oncolumnResize,
     prependSnippet: prependSnippetInternal,
+    selectedItemsTextSnippet,
     ...rest
   }: Props = $props();
 
@@ -374,6 +376,7 @@
             selectedAll = false
             selectedItems = []
           }}
+          {selectedItemsTextSnippet}
         />
       {/if}
 
